@@ -1,0 +1,137 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for gameq
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function gameq_schema() {
+  $schema = array();
+
+  $schema['gameq'] = array(
+    'description' => 'The base table for the gameq entity.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary Key of the GameQ server entity.',
+        'type' => 'serial',
+		'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'Gameserver name.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+		'default' => '',
+      ),
+      'description' => array(
+        'description' => 'Gameserver description.',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'ip' => array(
+        'description' => 'Gameserver IP address.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'port' => array(
+        'description' => 'Gameserver query port.',
+        'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+        'default' => '',
+      ),
+      'gametype' => array(
+        'description' => 'Gameserver type.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'players' => array(
+        'description' => 'Number of players on gameserver at last update.',
+        'type' => 'int',
+        'length' => 255,
+		'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid that owns this gameserver; initially, this is the user that created it.',
+        'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Boolean indicating whether the gameserver is published (visible to non-administrators)',
+        'type' => 'int',
+		'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the gameserver was created.',
+        'type' => 'int',
+		'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the server was most recently saved.',
+        'type' => 'int',
+		'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'entity_changed' => array('changed'),
+      'entity_created' => array('created'),
+      'uid' => array('uid'),
+    ),
+  );
+  return $schema;
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function gameq_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  $lib_name = 'gameq';
+
+  if ($phase == 'runtime') {
+
+    $requirements['gameq'] = array(
+      'title' => $t('gameq: GameQ library')
+    );
+
+    $library = libraries_detect($lib_name);
+    if ($library && !empty($library['installed'])) {
+      $requirements['gameq']['value'] = $t('GameQ library is available.');
+      $requirements['gameq']['severity'] = REQUIREMENT_OK;
+    }
+    else {
+      $requirements['gameq']['description'] = $library['error message'];
+      $requirements['gameq']['value'] = $t('GameQ library is not available.');
+      $requirements['gameq']['severity'] = REQUIREMENT_ERROR;
+    }
+
+  }
+
+  return $requirements;
+}
+
+/**
+* Implements hook_uninstall().
+*/
+function gameq_uninstall() {
+  //variable_del('variable_name');
+}

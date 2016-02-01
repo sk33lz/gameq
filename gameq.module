@@ -1,0 +1,424 @@
+<?php
+
+/**
+ * @file
+ * gameq.module
+ */
+
+// 50 items per page.
+define('TOTAL_ITEMS_PER_PAGE', 50);
+
+// Admin uri links.
+define('ADMIN_CONTENT_gameq_MANAGE_URI', 'admin/content/gameq/manage/');
+define('ADMIN_CONTENT_gameq_URI', 'admin/content/gameq');
+
+/**
+ * Implements hook_entity_info().
+ */
+function gameq_entity_info() {
+  $gameq_entity_info['gameq'] = array(
+    'label' => t('gameq'),
+    'label callback' => 'gameq_label_callback',
+    'entity class' => 'gameq',
+    'controller class' => 'gameqController',
+    'base table' => 'gameq',
+    'uri callback' => 'gameq_uri',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'gameq_id',
+    ),
+    'uri callback' => 'entity_class_uri',
+    'load hook' => 'gameq_load',
+    'static cache' => TRUE,
+    'admin ui' => array(
+      'path' => 'admin/content/gameq',
+      'controller class' => 'gameqUIController',
+      'file' => 'includes/gameq.admin.inc',
+    ),
+    'module' => 'gameq',
+    'access callback' => 'gameq_access_callback',
+    'bundles' => array(
+      'gameq' => array(
+        'label' => 'gameq',
+        'admin' => array(
+          'path' => 'admin/structure/gameq/manage',
+          'access arguments' => array('administer gameq'),
+        ),
+      ),
+    ),
+    'views controller class' => 'EntityDefaultViewsController',
+  );
+
+  return $gameq_entity_info;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function gameq_menu() {
+  $items = array();
+
+  $items['gameq/%gameq'] = array(
+    'title' => 'gameq',
+    'page callback' => 'gameq_view_entity',
+    'page arguments' => array(1),
+    'access callback' => 'gameq_access_menu_callback',
+    'access arguments' => array('view', 1),
+  );
+
+  $items['gameq/locate'] = array(
+    'page callback' => 'gameq_locate_callback',
+    'access arguments' => array('access content'),
+  );
+
+  $items['admin/content/gameq/bulk/delete/%'] = array(
+    'title' => 'Bulk Delete gameq',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gameq_bulk_delete', 5),
+    'access arguments' => array('administer gameq entities'),
+    'file' => 'includes/gameq.admin.inc',
+  );
+
+  $items['admin/structure/gameq'] = array(
+    'title' => 'gameq Fields',
+    'access arguments' => array('administer gameq entities'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Help function api data.
+ */
+function gameq_locate_callback() {
+  $params = drupal_get_query_parameters();
+
+}
+
+/**
+ * Implements hook_permission().
+ */
+function gameq_permission() {
+  return array(
+    'administer gameq entities' => array(
+      'title' => t('Administer gameq Entities'),
+      'description' => t('Allows a user to administer lawmaker entities'),
+    ),
+    'view gameq entities' => array(
+      'title' => t('View gameq Entity'),
+      'description' => t('Allows a user to view the gameq entities.'),
+    ),
+    'create gameq entities' => array(
+      'title' => t('Create gameq Entities'),
+      'description' => t('Allows a user to create gameq entities.'),
+    ),
+    'edit gameq entities' => array(
+      'title' => t('Edit gameq Entities'),
+      'description' => t('Allows a user to edit gameq entities.'),
+    ),
+    'delete gameq entities' => array(
+      'title' => t('Delete gameq Entities'),
+      'description' => t('Allows a user to delete gameq entities.'),
+    ),
+    'use gameq bulk operations' => array(
+      'title' => t('Do bulk operations on gameq entities'),
+      'description' => t('Allows a user to do bulk operations.'),
+    ),
+  );
+}
+
+/**
+ * Check access permission for gameq Entity UI.
+ */
+function gameq_access_menu_callback($op, $gameq = NULL, $account = NULL) {
+  switch ($op) {
+    case 'view':
+      return user_access('view gameq entities', $account);
+
+    case 'create':
+      return user_access('create gameq entities', $account);
+
+    case 'update':
+      return user_access('edit gameq entities', $account);
+
+    case 'delete':
+      return user_access('delete gameq entities', $account);
+  }
+
+  return FALSE;
+}
+
+/**
+ * gameq access callback.
+ */
+function gameq_access_callback() {
+  if (user_is_anonymous() && !user_access('administer gameq entities')) {
+    return FALSE;
+  }
+  else {
+    return TRUE;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function gameq_theme() {
+  return array(
+    'gameq_full' => array(
+      'variables' => array('gameq' => NULL),
+      'file' => 'includes/gameq.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Helper function for custom queries.
+ */
+function gameq_entity_query($conditions = array()) {
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'gameq');
+
+  // Apply conditions.
+  foreach ($conditions as $key => $value) {
+    $query->propertyCondition($key, $value);
+  }
+
+  $result = $query->execute();
+
+  if (isset($result['gameq'])) {
+    $gameq = array_keys($result['gameq']);
+  }
+  else {
+    $gameq = array();
+  }
+
+  return $gameq;
+}
+
+/**
+ * Label callback for gameq entities, for menu router, etc.
+ */
+function gameq_label_callback($gameq, $type) {
+  return empty($gameq->username) ? 'Untitled Lawmaker' : $gameq->username;
+}
+
+/**
+ * Saves Lawmaker to database.
+ */
+function gameq_save(gameq $gameq) {
+  return $gameq->save();
+}
+
+/**
+ * View for /gameq/<gameq_id> page.
+ */
+function gameq_view_entity($gameq) {
+  // Path not entity.
+  $gameq_output = theme('gameq_full', array('gameq' => $gameq));
+  return $gameq_output;
+}
+
+/**
+ * gameq custom entity class.
+ */
+class gameq extends Entity {
+  /**
+   * Override defaultUri().
+   */
+  protected function defaultUri() {
+    return array('path' => 'gameq/' . $this->identifier());
+  }
+}
+
+/**
+ * Menu autoloader for /gameq.
+ */
+function gameq_load($gameq_id, $reset = FALSE) {
+  $gameq = gameq_load_multiple(array($gameq_id), array(), $reset);
+  return reset($gameq);
+}
+
+/**
+ * Load multiple gameq based on certain conditions.
+ */
+//function gameq_load_multiple($gameq_ids = array(), $conditions = array('in_office' => 1), $reset = FALSE) {
+//  return entity_load('gameq', $gameq_ids, $conditions, $reset);
+//}
+
+/**
+ * Deletes a gameq server.
+ */
+function gameq_delete(gameq $gameq) {
+  $gameq->delete();
+}
+
+/**
+ * Delete multiple gameq servers.
+ */
+function gameq_delete_multiple(array $gameq_ids) {
+  entity_get_controller('gameq')->delete($gameq_ids);
+}
+
+/**
+ * Custom controller for the gameq entity.
+ */
+class gameqController extends EntityAPIController {
+
+  /**
+   * Override the save method.
+   */
+  public function save($entity, DatabaseTransaction $transaction = NULL) {
+    if (isset($entity->is_new)) {
+      $entity->created = REQUEST_TIME;
+    }
+
+    $entity->changed = REQUEST_TIME;
+    return parent::save($entity, $transaction);
+  }
+}
+
+/**
+ * Custom controller for the administrator UI.
+ */
+class gameqUIController extends EntityDefaultUIController {
+
+  /**
+   * Override the menu hook for default ui controller.
+   */
+  public function hook_menu() {
+    $items = parent::hook_menu();
+    $items[$this->path]['title'] = t('gameq');
+    $items[$this->path]['description'] = t('Manage gameq, including fields.');
+    $items[$this->path]['access callback'] = 'gameq_access_callback';
+    $items[$this->path]['access arguments'] = array('administer gameq entities');
+    $items[$this->path]['type'] = MENU_LOCAL_TASK;
+    return $items;
+  }
+
+  /**
+   * Admin form for searching and doing bulk operations.
+   */
+  public function overviewForm($form, &$form_state) {
+    $form['pager'] = array('#theme' => 'pager');
+
+    $header = array(
+      'gameq_id' => array('data' => t('gameq ID'), 'field' => 'gameq_id'),
+      'username' => array('data' => t('Username'), 'field' => 'username'),
+      'operations' => array('data' => t('Operations'), 'field' => 'operations'),
+    );
+
+    $options = array();
+    $search_term = !empty($_GET['search']) ? $_GET['search'] : NULL;
+
+    $query = new EntityFieldQuery();
+    $query
+      ->entityCondition('entity_type', 'gameq');
+
+    if (!empty($search_term)) {
+      $query->propertyCondition('username', '%' . $search_term . '%', 'like');
+    }
+    // Check for sort order and sort key.
+    if (!empty($_GET['sort']) && !empty($_GET['order'])) {
+      $sort = strtoupper($_GET['sort']);
+      $order = strtolower($_GET['order']);
+      $order = str_replace(' ', '_', $order);
+      if ($order != 'operations') {
+        $query->propertyOrderBy($order, $sort);
+      }
+    }
+
+    $query->pager(TOTAL_ITEMS_PER_PAGE);
+
+    $result = $query->execute();
+    $gameq_results = !empty($result['gameq']) ? $result['gameq'] : array();
+    $gameq_array = !empty($gameq_results) ? gameq_load_multiple(array_keys($gameq_results)) : array();
+    foreach ($gameq_array as $gameq_id => $gameq) {
+      $options['gameq_id-' . $gameq_id] = array(
+        'gameq_id' => l($gameq->gameq_id, 'gameq/' . $gameq->gameq_id),
+        'username' => l($gameq->username, 'gameq/' . $gameq->gameq_id),
+        'operations' =>
+        l(t('View'), 'gameq/' . $gameq->gameq_id) . ' ' .
+        l(t('Edit'), ADMIN_CONTENT_gameq_MANAGE_URI . $gameq_id, array('query' => array('destination' => ADMIN_CONTENT_gameq_URI))) . ' ' .
+        l(t('Delete'), ADMIN_CONTENT_gameq_MANAGE_URI . $gameq_id . '/delete', array('attributes' => array('class' => array('gameq-delete-' . $gameq->gameq_id), ), 'query' => array('destination' => ADMIN_CONTENT_gameq_URI))),
+      );
+    }
+
+    $form['search'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Basic Search'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !empty($search_term) ? FALSE : TRUE,
+    );
+
+    $form['search']['search_text'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Search Term'),
+      '#default_value' => !empty($search_term) ? $search_term : '',
+    );
+
+    $form['search']['search_submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Search'),
+    );
+
+    $form['bulk_operations'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Bulk Operations'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+
+    $form['bulk_operations']['operations'] = array(
+      '#type' => 'select',
+      '#options' => array(
+        0 => t('Select a bulk operation'),
+        'delete' => t('Delete selected gameq'),
+      ),
+    );
+
+    $form['bulk_operations']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    );
+
+    $form['entities'] = array(
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#options' => $options,
+      '#attributes' => array('class' => array('entity-sort-table')),
+      '#empty' => t('There are no gameq.'),
+    );
+
+    return $form;
+  }
+
+  /**
+   * Form Submit method.
+   */
+  public function overviewFormSubmit($form, &$form_state) {
+    $values = $form_state['input'];
+    $gameq_ids = array();
+
+    if (!empty($values['entities'])) {
+      foreach ($values['entities'] as $index => $value) {
+        if (!empty($value)) {
+          $gameq_ids[] = str_replace('gameq_id-', '', $value);
+        }
+      }
+
+      switch ($values['operations']) {
+        case 'delete':
+          drupal_goto('admin/content/gameq/bulk/delete/' . implode('|', $gameq_ids));
+          break;
+      }
+    }
+
+    if (!empty($values['search_text'])) {
+      drupal_goto('admin/content/gameq', array('query' => array('search' => $values['search_text'])));
+    }
+  }
+
+}

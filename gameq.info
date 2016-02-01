@@ -1,0 +1,6 @@
+name = GameQ
+description = "Query various types of Game Servers using Drupal with the GameQ 3rd party library."
+core = 7.x
+package = GameQ
+
+dependencies[] = entity
