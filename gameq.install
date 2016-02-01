@@ -10,7 +10,7 @@
 function gameq_schema() {
   $schema = array();
 
-  $schema['gameservers'] = array(
+  $schema['gameq'] = array(
     'description' => 'The base table for the gameserver entity.',
     'fields' => array(
       'id' => array(
