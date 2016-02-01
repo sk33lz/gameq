@@ -528,7 +528,7 @@ function gameq_protocols_list($simple = FALSE) {
         'machine_name' => $class->name(),
         'class_name' => $class_name,
         'port' => $class->port(),
-        'state' => $class->state(),
+        'players' => $class->players(),
       );
     }
     // Unset the class
