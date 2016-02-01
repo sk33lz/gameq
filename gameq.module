@@ -420,5 +420,130 @@ class gameqUIController extends EntityDefaultUIController {
       drupal_goto('admin/content/gameq', array('query' => array('search' => $values['search_text'])));
     }
   }
+  
+  /**
+ * Implements hook_entity_property_info().
+ */
+function gameq_entity_property_info() {
+
+  // Retrieve field info from our form function for reuse.
+  $form_state = array();
+  $form_info = overviewForm(array(), $form_state);
+
+  $info = array();
+  $info['gameq']['properties']['id'] = array(
+    'label' => t('Gameserver ID'),
+    'description' => t('The ID of the gameserver.'),
+    'type' => 'integer',
+    'schema field' => 'id',
+  );
+  $info['gameq']['properties']['name'] = array(
+    'label' => $form_info['name']['#title'],
+    'description' => t('Name of the gameserver.'),
+    'type' => 'text',
+    'schema field' => 'name',
+  );
+  $info['gameq']['properties']['description'] = array(
+    'label' => $form_info['description']['#title'],
+    'description' => t('Description of the gameserver.'),
+    'type' => 'text',
+    'schema field' => 'description',
+  );
+  $info['gameq']['properties']['ip'] = array(
+    'label' => $form_info['ip']['#title'],
+    'description' => t('Gameserver IP address.'),
+    'type' => 'text',
+    'schema field' => 'ip',
+  );
+  $info['gameq']['properties']['port'] = array(
+    'label' => $form_info['port']['#title'],
+    'description' => t('Gameserver port.'),
+    'type' => 'integer',
+    'schema field' => 'port',
+  );
+  $info['gameq']['properties']['gametype'] = array(
+    'label' => $form_info['gametype']['#title'],
+    'type' => 'token',
+    'description' => t('Gameserver type.'),
+    'setter callback' => 'entity_property_verbatim_set',
+    'options list' => 'gameservers_get_types',
+    'required' => TRUE,
+    'schema field' => 'type',
+  );
+  return $info;
+}
+
+/**
+ * Implements hook_libraries_info().
+ *
+ * Defines the external GameQ library.
+ */
+function gameq_libraries_info() {
+  $libraries['gameq'] = array(
+    'name' => 'GameQ library',
+    'vendor url' => 'https://github.com/Austinb/gameq',
+    'download url' => 'https://github.com/Austinb/GameQ/archive/v2.zip',
+    'version arguments' => array(
+      'file' => 'GameQ.php',
+      'pattern' => '/VERSION\s=\s\'([0-9\.]+)/',
+      'lines' => 60,
+    ),
+    'files' => array(
+      'php' => array('GameQ.php'),
+    ),
+  );
+
+  return $libraries;
+}
+
+function gameq_protocols_list($simple = FALSE) {
+  libraries_load('gameq');
+  // Define the protocols path
+  $protocols_path = GAMEQ_BASE . 'gameq/protocols/';
+  // Grab the dir with all the classes available
+  $dir = dir($protocols_path);
+  $protocols = array();
+  // Now lets loop the directories
+  while (FALSE !== ($entry = $dir->read())) {
+    if (!is_file($protocols_path . $entry)) {
+      continue;
+    }
+    // Figure out the class name
+    $class_name = 'GameQ_Protocols_' . ucfirst(pathinfo($entry, PATHINFO_FILENAME));
+    // Lets get some info on the class
+    $reflection = new ReflectionClass($class_name);
+    // Check to make sure we can actually load the class
+    if (!$reflection->IsInstantiable()) {
+      continue;
+    }
+    // Load up the class so we can get info
+    $class = new $class_name;
+    // Add it to the list
+    if ($simple) {
+      $protocols[$class->name()] = $class->name_long();
+    }
+    else {
+      $protocols[$class->name()] = array(
+        'name' => $class->name_long(),
+        'machine_name' => $class->name(),
+        'class_name' => $class_name,
+        'port' => $class->port(),
+        'state' => $class->state(),
+      );
+    }
+    // Unset the class
+    unset($class);
+  }
+  // Close the directory
+  unset($dir);
+  ksort($protocols);
+
+  return $protocols;
+}
+
+
+function gameq_get_types() {
+  return gameq_protocols_list(TRUE);
+}
 
 }
