@@ -21,7 +21,7 @@ function theme_gameq_full($variables) {
   $output .= '<div class="gametype">Game Type: ' . $gameq->gametype .  '</div>';
   $output .= '<div class="players">Players: ' . $gameq->players .  '</div>';
 
-  if (!empty($gameq->website)) {
+  /* if (!empty($gameq->website)) {
     $output .= '<div class="website"> ' . l(t('website'), $gameq->website, array('attributes' => array('target' => '_blank'))) . '</div>';
   }
 
@@ -37,7 +37,7 @@ function theme_gameq_full($variables) {
 
   if (!empty($gameq->youtube_url)) {
     $output .= '<div class="youtube">' . l(t('youtube'), $gameq->youtube_url, array('attributes' => array('target' => '_blank'))) . '</div>';
-  }
+  }*/
 
   if (user_access('administer gameq entities') && isset($gameq->id)) {
     $edit_link = '<ul class="tabs primary"><li>';
