@@ -10,14 +10,14 @@
 function gameq_form($form, &$form_state, $gameq = NULL) {
   $form = array();
 
-  $form['id'] = array(
+  /*$form['id'] = array(
     '#title' => t('Server ID'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->id) ? $gameq->id : '',
     '#description' => t('Primary Key of the GameQ server entity.'),
     '#required' => TRUE,
     '#maxlength' => 255,
-  );
+  );*/
 
   $form['name'] = array(
     '#title' => t('Gameserver name.'),
@@ -59,7 +59,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#maxlength' => 128,
   );
 
-  $form['players'] = array(
+  /*$form['players'] = array(
     '#title' => t('Number of players on gameserver at last update.'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->players) ? $gameq->players : '',
@@ -97,7 +97,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#default_value' => isset($gameq->changed) ? $gameq->changed : '',
     '#required' => FALSE,
     '#maxlength' => 255,
-  );
+  );*/
 
   field_attach_form('gameq', $gameq, $form, $form_state);
 
