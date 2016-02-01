@@ -202,11 +202,11 @@ function gameq_entity_query($conditions = array()) {
  * Label callback for gameq entities, for menu router, etc.
  */
 function gameq_label_callback($gameq, $type) {
-  return empty($gameq->username) ? 'Untitled Lawmaker' : $gameq->username;
+  return empty($gameq->name) ? 'Untitled Server' : $gameq->name;
 }
 
 /**
- * Saves Lawmaker to database.
+ * Saves Server to database.
  */
 function gameq_save(gameq $gameq) {
   return $gameq->save();
@@ -306,7 +306,7 @@ class gameqUIController extends EntityDefaultUIController {
 
     $header = array(
       'id' => array('data' => t('gameq ID'), 'field' => 'id'),
-      'username' => array('data' => t('Username'), 'field' => 'username'),
+      'name' => array('data' => t('Server Name'), 'field' => 'name'),
       'operations' => array('data' => t('Operations'), 'field' => 'operations'),
     );
 
@@ -318,7 +318,7 @@ class gameqUIController extends EntityDefaultUIController {
       ->entityCondition('entity_type', 'gameq');
 
     if (!empty($search_term)) {
-      $query->propertyCondition('username', '%' . $search_term . '%', 'like');
+      $query->propertyCondition('name', '%' . $search_term . '%', 'like');
     }
     // Check for sort order and sort key.
     if (!empty($_GET['sort']) && !empty($_GET['order'])) {
