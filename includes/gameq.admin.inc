@@ -124,9 +124,9 @@ function gameq_form_validate($form, &$form_state) {
 function gameq_form_submit($form, &$form_state) {
   $gameq = entity_ui_form_submit_build_entity($form, $form_state);
   $gameq->save();
-  drupal_set_message(t('@username lawmaker has been saved.', array('@username' => $gameq->username)));
+  drupal_set_message(t('@name GameQ Server has been saved.', array('@name' => $gameq->name)));
   // $form_state['redirect'] = 'admin/content/gameq';
-  $form_state['redirect'] = 'gameq/' . $gameq->gameq_id;
+  $form_state['redirect'] = 'gameq/' . $gameq->id;
 }
 
 /**
@@ -134,7 +134,7 @@ function gameq_form_submit($form, &$form_state) {
  */
 function gameq_bulk_delete($form, &$form_state, $gameq_ids) {
   $gameq_ids = explode('|', $gameq_ids);
-  $gameq = gameq_load_multiple($gameq_ids);
+  $gameqs = gameq_load_multiple($gameq_ids);
 
   $form = array();
   $form_state['gameq_ids'] = $gameq_ids;
@@ -146,8 +146,8 @@ function gameq_bulk_delete($form, &$form_state, $gameq_ids) {
     'attributes' => array(),
   );
 
-  foreach ($gameq as $lawmaker) {
-    $variables['items'][] = $lawmaker->username;
+  foreach ($gameqs as $gameq) {
+    $variables['items'][] = $gameq->name;
   }
 
   $form['summary'] = array(
