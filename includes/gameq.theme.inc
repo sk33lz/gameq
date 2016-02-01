@@ -10,20 +10,16 @@
 function theme_gameq_full($variables) {
   $output = '';
   $gameq = $variables['gameq'];
-  $gameq_image_size = '200x250';
-  $image_data = array(
-    'path' => drupal_get_path('module', 'gameq') . '/images/' . $gameq_image_size . '/' . $gameq->bioguide_id . '.jpg',
-  );
 
   $output .= '<div class="gameq_meta">';
 
   // Lazy...
-  $output .= '<div class="image" style="float: left; margin-right: 20px">' . theme('image', $image_data) . '</div>';
-  $output .= '<div class="gameq-name">' . trim($gameq->title) . '. ' . trim($gameq->firstname)  . ' ' . trim($gameq->lastname) . '</div>';
-  $output .= '<div class="party">' . $gameq->party . ' ' . $gameq->state  . '  ' . $gameq->district . '</div>';
-  $output .= '<div class="congress_office">' . $gameq->congress_office .  '</div>';
-  $output .= '<div class="phone">tel: ' . $gameq->phone .  '</div>';
-  $output .= '<div class="fax">fax: ' . $gameq->fax .  '</div>';
+  $output .= '<div class="gameq-id">' . trim($gameq->id) . '</div>';
+  $output .= '<div class="gameq-name">' . trim($gameq->name) . '</div>';
+  $output .= '<div class="description">' . $gameq->description . '</div>';
+  $output .= '<div class="gameq-address-port">' . $gameq->ip . ' ': . $gameq->port .  </div>';
+  $output .= '<div class="gametype">Game Type: ' . $gameq->gametype .  '</div>';
+  $output .= '<div class="players">Players: ' . $gameq->players .  '</div>';
 
   if (!empty($gameq->website)) {
     $output .= '<div class="website"> ' . l(t('website'), $gameq->website, array('attributes' => array('target' => '_blank'))) . '</div>';
@@ -43,9 +39,9 @@ function theme_gameq_full($variables) {
     $output .= '<div class="youtube">' . l(t('youtube'), $gameq->youtube_url, array('attributes' => array('target' => '_blank'))) . '</div>';
   }
 
-  if (user_access('administer gameq entities') && isset($gameq->gameq_id)) {
+  if (user_access('administer gameq entities') && isset($gameq->id)) {
     $edit_link = '<ul class="tabs primary"><li>';
-    $edit_link .= l(t('Edit'), 'admin/content/gameq/manage/' . $gameq->gameq_id, array('attributes' => array('class' => 'admin-edit-link')));
+    $edit_link .= l(t('Edit'), 'admin/content/gameq/manage/' . $gameq->id, array('attributes' => array('class' => 'admin-edit-link')));
     $edit_link .= '</li></ul>';
     $output .= $edit_link;
   }
