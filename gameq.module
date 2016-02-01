@@ -244,9 +244,9 @@ function gameq_load($id, $reset = FALSE) {
 /**
  * Load multiple gameq based on certain conditions.
  */
-//function gameq_load_multiple($ids = array(), $conditions = array('in_office' => 1), $reset = FALSE) {
-//  return entity_load('gameq', $ids, $conditions, $reset);
-//}
+function gameq_load_multiple($ids = array(), $conditions = array('in_office' => 1), $reset = FALSE) {
+  return entity_load('gameq', $ids, $conditions, $reset);
+}
 
 /**
  * Deletes a gameq server.
