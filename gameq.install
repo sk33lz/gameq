@@ -10,13 +10,13 @@
 function gameq_schema() {
   $schema = array();
 
-  $schema['gameq'] = array(
-    'description' => 'The base table for the gameq entity.',
+  $schema['gameservers'] = array(
+    'description' => 'The base table for the gameserver entity.',
     'fields' => array(
       'id' => array(
-        'description' => 'Primary Key of the GameQ server entity.',
+        'description' => 'Primary key of the gameserver entity.',
         'type' => 'serial',
-		'unsigned' => TRUE,
+        'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'name' => array(
@@ -24,7 +24,6 @@ function gameq_schema() {
         'type' => 'varchar',
         'length' => 128,
         'not null' => FALSE,
-		'default' => '',
       ),
       'description' => array(
         'description' => 'Gameserver description.',
@@ -36,66 +35,58 @@ function gameq_schema() {
         'description' => 'Gameserver IP address.',
         'type' => 'varchar',
         'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
       ),
       'port' => array(
         'description' => 'Gameserver query port.',
         'type' => 'int',
-		'unsigned' => TRUE,
-		'not null' => TRUE,
-        'default' => '',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
       'gametype' => array(
         'description' => 'Gameserver type.',
         'type' => 'varchar',
         'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
       ),
       'players' => array(
         'description' => 'Number of players on gameserver at last update.',
         'type' => 'int',
-        'length' => 255,
-		'unsigned' => TRUE,
+        'unsigned' => TRUE,
         'default' => 0,
       ),
       'uid' => array(
         'description' => 'The {users}.uid that owns this gameserver; initially, this is the user that created it.',
         'type' => 'int',
-		'unsigned' => TRUE,
-		'not null' => TRUE,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
         'default' => 0,
       ),
       'status' => array(
-        'description' => 'Boolean indicating whether the gameserver is published (visible to non-administrators)',
+        'description' => 'Boolean indicating whether the gameserver is published (visible to non-administrators).',
         'type' => 'int',
-		'unsigned' => TRUE,
-        'not null' => TRUE,
+        'unsigned' => TRUE,
         'default' => 1,
       ),
       'created' => array(
         'description' => 'The Unix timestamp when the gameserver was created.',
         'type' => 'int',
-		'unsigned' => TRUE,
-        'not null' => TRUE,
+        'unsigned' => TRUE,
         'default' => 0,
       ),
       'changed' => array(
         'description' => 'The Unix timestamp when the server was most recently saved.',
         'type' => 'int',
-		'unsigned' => TRUE,
-        'not null' => TRUE,
+        'unsigned' => TRUE,
         'default' => 0,
       ),
-	),
-    'primary key' => array('id'),
+    ),
     'indexes' => array(
       'entity_changed' => array('changed'),
       'entity_created' => array('created'),
       'uid' => array('uid'),
     ),
+    'primary key' => array('id'),
   );
+  
   return $schema;
 }
 
