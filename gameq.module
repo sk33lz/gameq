@@ -338,7 +338,7 @@ class gameqUIController extends EntityDefaultUIController {
     foreach ($gameq_array as $id => $gameq) {
       $options['id-' . $id] = array(
         'id' => l($gameq->id, 'gameq/' . $gameq->id),
-        'username' => l($gameq->username, 'gameq/' . $gameq->id),
+        'name' => l($gameq->name, 'gameq/' . $gameq->id),
         'operations' =>
         l(t('View'), 'gameq/' . $gameq->id) . ' ' .
         l(t('Edit'), ADMIN_CONTENT_gameq_MANAGE_URI . $id, array('query' => array('destination' => ADMIN_CONTENT_gameq_URI))) . ' ' .
