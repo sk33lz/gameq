@@ -25,7 +25,7 @@ function gameq_entity_info() {
     'uri callback' => 'gameq_uri',
     'fieldable' => TRUE,
     'entity keys' => array(
-      'id' => 'gameq_id',
+      'id' => 'id',
     ),
     'uri callback' => 'entity_class_uri',
     'load hook' => 'gameq_load',
@@ -213,7 +213,7 @@ function gameq_save(gameq $gameq) {
 }
 
 /**
- * View for /gameq/<gameq_id> page.
+ * View for /gameq/<id> page.
  */
 function gameq_view_entity($gameq) {
   // Path not entity.
@@ -236,16 +236,16 @@ class gameq extends Entity {
 /**
  * Menu autoloader for /gameq.
  */
-function gameq_load($gameq_id, $reset = FALSE) {
-  $gameq = gameq_load_multiple(array($gameq_id), array(), $reset);
+function gameq_load($id, $reset = FALSE) {
+  $gameq = gameq_load_multiple(array($id), array(), $reset);
   return reset($gameq);
 }
 
 /**
  * Load multiple gameq based on certain conditions.
  */
-//function gameq_load_multiple($gameq_ids = array(), $conditions = array('in_office' => 1), $reset = FALSE) {
-//  return entity_load('gameq', $gameq_ids, $conditions, $reset);
+//function gameq_load_multiple($ids = array(), $conditions = array('in_office' => 1), $reset = FALSE) {
+//  return entity_load('gameq', $ids, $conditions, $reset);
 //}
 
 /**
@@ -258,8 +258,8 @@ function gameq_delete(gameq $gameq) {
 /**
  * Delete multiple gameq servers.
  */
-function gameq_delete_multiple(array $gameq_ids) {
-  entity_get_controller('gameq')->delete($gameq_ids);
+function gameq_delete_multiple(array $ids) {
+  entity_get_controller('gameq')->delete($ids);
 }
 
 /**
@@ -305,7 +305,7 @@ class gameqUIController extends EntityDefaultUIController {
     $form['pager'] = array('#theme' => 'pager');
 
     $header = array(
-      'gameq_id' => array('data' => t('gameq ID'), 'field' => 'gameq_id'),
+      'id' => array('data' => t('gameq ID'), 'field' => 'id'),
       'username' => array('data' => t('Username'), 'field' => 'username'),
       'operations' => array('data' => t('Operations'), 'field' => 'operations'),
     );
@@ -335,14 +335,14 @@ class gameqUIController extends EntityDefaultUIController {
     $result = $query->execute();
     $gameq_results = !empty($result['gameq']) ? $result['gameq'] : array();
     $gameq_array = !empty($gameq_results) ? gameq_load_multiple(array_keys($gameq_results)) : array();
-    foreach ($gameq_array as $gameq_id => $gameq) {
-      $options['gameq_id-' . $gameq_id] = array(
-        'gameq_id' => l($gameq->gameq_id, 'gameq/' . $gameq->gameq_id),
-        'username' => l($gameq->username, 'gameq/' . $gameq->gameq_id),
+    foreach ($gameq_array as $id => $gameq) {
+      $options['id-' . $id] = array(
+        'id' => l($gameq->id, 'gameq/' . $gameq->id),
+        'username' => l($gameq->username, 'gameq/' . $gameq->id),
         'operations' =>
-        l(t('View'), 'gameq/' . $gameq->gameq_id) . ' ' .
-        l(t('Edit'), ADMIN_CONTENT_gameq_MANAGE_URI . $gameq_id, array('query' => array('destination' => ADMIN_CONTENT_gameq_URI))) . ' ' .
-        l(t('Delete'), ADMIN_CONTENT_gameq_MANAGE_URI . $gameq_id . '/delete', array('attributes' => array('class' => array('gameq-delete-' . $gameq->gameq_id), ), 'query' => array('destination' => ADMIN_CONTENT_gameq_URI))),
+        l(t('View'), 'gameq/' . $gameq->id) . ' ' .
+        l(t('Edit'), ADMIN_CONTENT_gameq_MANAGE_URI . $id, array('query' => array('destination' => ADMIN_CONTENT_gameq_URI))) . ' ' .
+        l(t('Delete'), ADMIN_CONTENT_gameq_MANAGE_URI . $id . '/delete', array('attributes' => array('class' => array('gameq-delete-' . $gameq->id), ), 'query' => array('destination' => ADMIN_CONTENT_gameq_URI))),
       );
     }
 
@@ -400,18 +400,18 @@ class gameqUIController extends EntityDefaultUIController {
    */
   public function overviewFormSubmit($form, &$form_state) {
     $values = $form_state['input'];
-    $gameq_ids = array();
+    $ids = array();
 
     if (!empty($values['entities'])) {
       foreach ($values['entities'] as $index => $value) {
         if (!empty($value)) {
-          $gameq_ids[] = str_replace('gameq_id-', '', $value);
+          $ids[] = str_replace('id-', '', $value);
         }
       }
 
       switch ($values['operations']) {
         case 'delete':
-          drupal_goto('admin/content/gameq/bulk/delete/' . implode('|', $gameq_ids));
+          drupal_goto('admin/content/gameq/bulk/delete/' . implode('|', $ids));
           break;
       }
     }
