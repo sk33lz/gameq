@@ -104,8 +104,8 @@ function gameq_requirements($phase) {
       'title' => $t('gameq: GameQ library')
     );
 
-    $library = libraries_detect($lib_name);
-    if ($library && !empty($library['installed'])) {
+    $libraries = libraries_get_libraries();
+    if (isset($libraries['gameq'])) {
       $requirements['gameq']['value'] = $t('GameQ library is available.');
       $requirements['gameq']['severity'] = REQUIREMENT_OK;
     }
