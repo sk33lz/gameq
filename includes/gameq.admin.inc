@@ -105,10 +105,10 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#type' => 'actions',
     'submit' => array(
       '#type' => 'submit',
-      '#value' => isset($gameq->gameq_id) ? t('Update GameQ Server') : t('Save GameQ Server'),
+      '#value' => isset($gameq->id) ? t('Update GameQ Server') : t('Save GameQ Server'),
     ),
     'delete_link' => array(
-      '#markup' => isset($gameq->gameq_id) ? l(t('Delete GameQ Server'), 'admin/content/gameq/manage/' . $gameq->gameq_id . '/delete', array('attributes' => array('id' => array('gameq-delete-' . $gameq->gameq_id), 'class' => array('button remove')), 'query' => array('destination' => 'admin/content/gameq'))) : ''));
+      '#markup' => isset($gameq->id) ? l(t('Delete GameQ Server'), 'admin/content/gameq/manage/' . $gameq->id . '/delete', array('attributes' => array('id' => array('gameq-delete-' . $gameq->id), 'class' => array('button remove')), 'query' => array('destination' => 'admin/content/gameq'))) : ''));
   return $form;
 }
 
