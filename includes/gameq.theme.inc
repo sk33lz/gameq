@@ -14,10 +14,10 @@ function theme_gameq_full($variables) {
   $output .= '<div class="gameq_meta">';
 
   // Lazy...
-  $output .= '<div class="gameq-id">' . trim($gameq->id) . '</div>';
-  $output .= '<div class="gameq-name">' . trim($gameq->name) . '</div>';
-  $output .= '<div class="description">' . $gameq->description . '</div>';
-  $output .= '<div class="gameq-address-port">' . $gameq->ip . ' ': . $gameq->port .  </div>';
+  $output .= '<div class="gameq-id">Server ID: ' . trim($gameq->id) . '</div>';
+  $output .= '<div class="gameq-name">Server Name: ' . trim($gameq->name) . '</div>';
+  $output .= '<div class="description">Server Description: ' . $gameq->description . '</div>';
+  $output .= '<div class="gameq-address-port">Address: ' . $gameq->ip . '.':'. ' . $gameq->port .  </div>';
   $output .= '<div class="gametype">Game Type: ' . $gameq->gametype .  '</div>';
   $output .= '<div class="players">Players: ' . $gameq->players .  '</div>';
 
