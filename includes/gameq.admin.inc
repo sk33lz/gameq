@@ -63,7 +63,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#title' => t('Number of players on gameserver at last update.'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->players) ? $gameq->players : '',
-    '#required' => TRUE,
+    '#required' => FALSE,
     '#maxlength' => 255,
   );
 
@@ -71,7 +71,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#title' => t('The {users}.uid that owns this gameserver; initially, this is the user that created it.'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->uid) ? $gameq->uid : '',
-    '#required' => TRUE,
+    '#required' => FALSE,
     '#maxlength' => 255,
   );
 
@@ -79,7 +79,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#title' => t('Boolean indicating whether the gameserver is published (visible to non-administrators)'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->status) ? $gameq->status : '',
-    '#required' => TRUE,
+    '#required' => FALSE,
     '#maxlength' => 255,
   );
 
@@ -87,7 +87,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#title' => t('The Unix timestamp when the gameserver was created.'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->created) ? $gameq->created : '',
-    '#required' => TRUE,
+    '#required' => FALSE,
     '#maxlength' => 255,
   );
 
@@ -95,7 +95,7 @@ function gameq_form($form, &$form_state, $gameq = NULL) {
     '#title' => t('The Unix timestamp when the server was most recently saved.'),
     '#type' => 'textfield',
     '#default_value' => isset($gameq->changed) ? $gameq->changed : '',
-    '#required' => TRUE,
+    '#required' => FALSE,
     '#maxlength' => 255,
   );
 
