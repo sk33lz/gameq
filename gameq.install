@@ -89,6 +89,7 @@ function gameq_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+	),
     'primary key' => array('id'),
     'indexes' => array(
       'entity_changed' => array('changed'),
